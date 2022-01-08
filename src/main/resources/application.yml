@@ -1,0 +1,22 @@
+## webserver
+server:
+  port: 8080
+  servlet:
+    contextPath: /api
+
+
+spring:
+  ## JPA
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+  ## MySQL
+  datasource:
+    url: jdbc:mysql://localhost:9876/cookbook
+    username: cookbook
+    password: cookbook
+
+logging:
+  level:
+    root: DEBUG
+  pattern.console: "%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n"
