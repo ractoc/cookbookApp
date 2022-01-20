@@ -1,5 +1,6 @@
 package com.ractoc.cookbook.handler;
 
+import com.ractoc.cookbook.dao.Recipe;
 import com.ractoc.cookbook.mapper.RecipeMapper;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.service.RecipeService;

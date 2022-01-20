@@ -1,21 +1,23 @@
 package com.ractoc.cookbook.dao;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
+@Entity(name = "Recipe")
 @Getter
 @Setter
-@RequiredArgsConstructor
 @ToString
-@Entity(name = "Recipe")
 @Table(name = "recipe", indexes = {
         @Index(name = "RECIPE_NAME_uindex", columnList = "NAME", unique = true)
 })
 public class Recipe {
     @Id
-    @Column(name = "ID", nullable = false, updatable = false)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", nullable = false)
     private Integer id;
 
     @Column(name = "NAME", nullable = false, unique = true, length = 50)

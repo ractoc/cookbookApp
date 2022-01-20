@@ -9,7 +9,10 @@ spring:
   ## JPA
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+#    show-sql: false
   ## MySQL
   datasource:
     url: jdbc:mysql://localhost:9876/cookbook

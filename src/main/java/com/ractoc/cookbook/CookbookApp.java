@@ -9,4 +9,5 @@ public class CookbookApp {
     public static void main(String[] args) {
         SpringApplication.run(CookbookApp.class, args);
     }
+
 }
