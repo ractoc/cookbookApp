@@ -1,5 +1,6 @@
 package com.ractoc.cookbook.controller;
 
+import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.handler.RecipeHandler;
 import com.ractoc.cookbook.model.RecipeModel;
 import io.swagger.annotations.*;
@@ -61,25 +62,35 @@ public class RecipeController extends BaseController {
     @ApiOperation(value = "Save recipe.", response = RecipeModel.class, consumes = "application/json", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "The recipe was successfully created", response = RecipeModel.class),
+            @ApiResponse(code = 409, message = "Recipe with supplied name already exists", response = String.class),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @PostMapping(value = "/", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> saveRecipe(@RequestBody RecipeModel recipe) {
-        return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), CREATED);
+        try {
+            return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), CREATED);
+        } catch (DuplicateEntryException e) {
+            return new ResponseEntity(e.getMessage(), CONFLICT);
+        }
     }
 
     @Transactional
     @ApiOperation(value = "Update recipe.", response = RecipeModel.class, consumes = "application/json", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "The recipe was successfully updated", response = RecipeModel.class),
+            @ApiResponse(code = 409, message = "Recipe with supplied name already exists", response = String.class),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> updateRecipe(@PathVariable("id") Integer recipeId, @RequestBody RecipeModel recipe) throws ValidationException {
         if (!recipeId.equals(recipe.getId())) {
-            throw new ValidationException("Supplied ID doesn't match fleet id");
+            throw new ValidationException("Supplied ID doesn't match recipe id");
         }
-        return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), OK);
+        try {
+            return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), OK);
+        } catch (DuplicateEntryException e) {
+            return new ResponseEntity(e.getMessage(), CONFLICT);
+        }
     }
 
     @Transactional

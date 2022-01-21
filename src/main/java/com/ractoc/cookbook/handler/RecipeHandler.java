@@ -1,6 +1,7 @@
 package com.ractoc.cookbook.handler;
 
 import com.ractoc.cookbook.dao.Recipe;
+import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.mapper.RecipeMapper;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.service.RecipeService;
@@ -26,7 +27,11 @@ public record RecipeHandler(RecipeService recipeService) {
         return recipeService.findRecipeById(id).map(RecipeMapper.INSTANCE::dbToModel);
     }
 
-    public RecipeModel saveRecipe(RecipeModel recipeModel) {
+    public RecipeModel saveRecipe(RecipeModel recipeModel) throws DuplicateEntryException {
+        Optional<Recipe> recipe = recipeService.findRecipeByName(recipeModel.getName());
+        if (recipe.isPresent() && !recipe.get().getId().equals(recipeModel.getId())) {
+            throw new DuplicateEntryException("name");
+        }
         return RecipeMapper.INSTANCE.dbToModel(recipeService.saveRecipe(RecipeMapper.INSTANCE.modelToDB(recipeModel)));
     }
 

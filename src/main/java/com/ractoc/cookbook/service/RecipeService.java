@@ -24,6 +24,10 @@ public record RecipeService(RecipeRepository recipeRepository) {
         return recipeRepository.findById(id);
     }
 
+    public Optional<Recipe> findRecipeByName(String name) {
+        return recipeRepository.findRecipeByName(name);
+    }
+
     public Recipe saveRecipe(Recipe recipe) {
         return recipeRepository.save(recipe);
     }
