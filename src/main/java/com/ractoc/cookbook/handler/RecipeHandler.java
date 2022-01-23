@@ -19,8 +19,8 @@ public record RecipeHandler(RecipeService recipeService) {
     public RecipeHandler {
     }
 
-    public List<RecipeModel> findAllRecipes() {
-        return recipeService.findAllRecipes().map(RecipeMapper.INSTANCE::dbToModel).collect(Collectors.toList());
+    public List<RecipeModel> findAllRecipes(String searchString) {
+        return recipeService.findAllRecipes(searchString).map(RecipeMapper.INSTANCE::dbToModel).collect(Collectors.toList());
     }
 
     public Optional<RecipeModel> findRecipeById(Integer id) {

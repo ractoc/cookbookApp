@@ -14,5 +14,5 @@ public class RecipeModel implements Serializable {
     private Integer id;
     private String name;
     private String description;
-    private byte[] image;
+    private String imageUrl;
 }

@@ -16,8 +16,12 @@ public record RecipeService(RecipeRepository recipeRepository) {
     public RecipeService {
     }
 
-    public Stream<Recipe> findAllRecipes() {
-        return StreamSupport.stream(recipeRepository.findAll().spliterator(), false);
+    public Stream<Recipe> findAllRecipes(String searchString) {
+        if (searchString.isBlank()) {
+            return recipeRepository.findAll().stream();
+        } else {
+            return recipeRepository.findAllByNameContainingIgnoreCase(searchString).stream();
+        }
     }
 
     public Optional<Recipe> findRecipeById(Integer id) {
