@@ -18,6 +18,17 @@ spring:
     url: jdbc:mysql://localhost:9876/cookbook
     username: cookbook
     password: cookbook
+  # File uploads
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+file:
+  storage:
+    location: ./uploads
 
 logging:
   level:

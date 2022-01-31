@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 public record RecipeService(RecipeRepository recipeRepository) {
@@ -38,5 +37,10 @@ public record RecipeService(RecipeRepository recipeRepository) {
 
     public void deleteRecipe(Integer id) {
         recipeRepository.deleteById(id);
+    }
+
+    public Recipe storeImageFileForRecipe(Recipe recipe, String imageFileName) {
+        recipe.setImageFileName(imageFileName);
+        return saveRecipe(recipe);
     }
 }

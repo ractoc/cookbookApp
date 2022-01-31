@@ -1,7 +1,6 @@
 package com.ractoc.cookbook.dao;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -26,7 +25,7 @@ public class Recipe {
     @Column(name = "DESCRIPTION", length = 250)
     private String description;
 
-    @Column(name = "IMAGE")
-    private byte[] image;
+    @Column(name = "IMAGE_FILE_NAME", length = 25)
+    private String imageFileName;
 
 }
