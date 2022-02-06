@@ -10,8 +10,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @ToString
+
 public class IngredientModel implements Serializable {
     private Integer id;
     private String name;
     private MeasurementType measurementType;
+    private Integer amount;
 }

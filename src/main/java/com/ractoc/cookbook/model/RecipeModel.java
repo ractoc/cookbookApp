@@ -3,6 +3,7 @@ package com.ractoc.cookbook.model;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,4 +16,6 @@ public class RecipeModel implements Serializable {
     private String name;
     private String description;
     private String imageFileName;
+
+    private Set<RecipeIngredientModel> recipeIngredients;
 }

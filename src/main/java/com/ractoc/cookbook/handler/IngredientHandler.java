@@ -1,6 +1,6 @@
 package com.ractoc.cookbook.handler;
 
-import com.ractoc.cookbook.dao.Ingredient;
+import com.ractoc.cookbook.dao.entity.Ingredient;
 import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.mapper.IngredientMapper;
 import com.ractoc.cookbook.model.IngredientModel;

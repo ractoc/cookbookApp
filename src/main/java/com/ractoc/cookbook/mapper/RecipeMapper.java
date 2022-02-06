@@ -1,6 +1,6 @@
 package com.ractoc.cookbook.mapper;
 
-import com.ractoc.cookbook.dao.Recipe;
+import com.ractoc.cookbook.dao.entity.Recipe;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
 import org.mapstruct.Mapper;

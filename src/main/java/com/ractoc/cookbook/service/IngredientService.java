@@ -1,6 +1,6 @@
 package com.ractoc.cookbook.service;
 
-import com.ractoc.cookbook.dao.Ingredient;
+import com.ractoc.cookbook.dao.entity.Ingredient;
 import com.ractoc.cookbook.dao.IngredientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

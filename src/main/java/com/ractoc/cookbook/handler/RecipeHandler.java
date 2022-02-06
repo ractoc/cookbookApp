@@ -1,6 +1,7 @@
 package com.ractoc.cookbook.handler;
 
-import com.ractoc.cookbook.dao.Recipe;
+import com.ractoc.cookbook.dao.entity.Ingredient;
+import com.ractoc.cookbook.dao.entity.Recipe;
 import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.exception.FileStorageException;
 import com.ractoc.cookbook.exception.NoSuchEntryException;
@@ -8,6 +9,8 @@ import com.ractoc.cookbook.mapper.RecipeMapper;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
 import com.ractoc.cookbook.service.FileStorageService;
+import com.ractoc.cookbook.service.IngredientService;
+import com.ractoc.cookbook.service.RecipeIngredientService;
 import com.ractoc.cookbook.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -20,7 +23,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public record RecipeHandler(RecipeService recipeService, FileStorageService fileStorageService) {
+public record RecipeHandler(RecipeService recipeService,
+                            IngredientService ingredientService,
+                            RecipeIngredientService recipeIngredientService,
+                            FileStorageService fileStorageService) {
 
     @Autowired
     public RecipeHandler {
@@ -70,4 +76,17 @@ public record RecipeHandler(RecipeService recipeService, FileStorageService file
         return fileStorageService.loadFileAsResource(fileName);
     }
 
+    public Optional<RecipeModel> addOrUpdateIngredient(Integer recipeId, Integer ingredientId, Integer amount) throws NoSuchEntryException {
+        Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
+        Ingredient ingredient = ingredientService.findIngredientById(ingredientId).orElseThrow(() -> new NoSuchEntryException("No Ingredient found for ID " + ingredientId));
+        recipeIngredientService.saveIngredientToRecipe(recipe, ingredient, amount);
+        return findRecipeById(recipeId);
+    }
+
+    public Optional<RecipeModel> removeIngredient(Integer recipeId, Integer ingredientId) throws NoSuchEntryException {
+        Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
+        Ingredient ingredient = ingredientService.findIngredientById(ingredientId).orElseThrow(() -> new NoSuchEntryException("No Ingredient found for ID " + ingredientId));
+        recipeIngredientService.removeIngredientFromRecipe(recipe, ingredient);
+        return findRecipeById(recipeId);
+    }
 }

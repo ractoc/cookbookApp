@@ -1,4 +1,4 @@
-package com.ractoc.cookbook.dao;
+package com.ractoc.cookbook.dao.entity;
 
 import com.ractoc.cookbook.model.MeasurementType;
 import lombok.Getter;
@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,12 +21,18 @@ public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @ToString.Include
     private Integer id;
 
     @Column(name = "name", length = 25, nullable = false)
+    @ToString.Include
     private String name;
 
     @Column(name = "measurement_type", nullable = false)
+    @ToString.Include
     private MeasurementType measurementType;
+
+    @OneToMany(mappedBy = "ingredient")
+    Set<RecipeIngredient> recipesIngredients;
 
 }

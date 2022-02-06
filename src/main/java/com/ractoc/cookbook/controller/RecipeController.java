@@ -12,7 +12,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +39,6 @@ public class RecipeController extends BaseController {
         this.recipeHandler = recipeHandler;
     }
 
-    @Transactional
     @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SimpleRecipeModel>> findAllRecipes(@RequestParam("searchString") String searchString) {
         return new ResponseEntity<>(
@@ -48,13 +46,11 @@ public class RecipeController extends BaseController {
                 , OK);
     }
 
-    @Transactional
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> findRecipeById(@PathVariable("id") Integer recipeId) {
         return recipeHandler.findRecipeById(recipeId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
     }
 
-    @Transactional
     @PostMapping(value = "/", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> saveRecipe(@RequestBody RecipeModel recipe) {
         try {
@@ -96,7 +92,6 @@ public class RecipeController extends BaseController {
         }
     }
 
-    @Transactional
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> updateRecipe(@PathVariable("id") Integer recipeId, @RequestBody RecipeModel recipe) throws ValidationException {
         if (!recipeId.equals(recipe.getId())) {
@@ -109,10 +104,30 @@ public class RecipeController extends BaseController {
         }
     }
 
-    @Transactional
     @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> deleteRecipe(@PathVariable("id") Integer recipeId) {
         return recipeHandler.deleteRecipe(recipeId).map(id -> new ResponseEntity<>(id, NO_CONTENT)).orElse(new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PostMapping(value = "/{recipeId}/ingredient/{ingredientId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> addOrUpdateIngredient(@PathVariable("recipeId") Integer recipeId,
+                                                             @PathVariable("ingredientId") Integer ingredientId,
+                                                             @RequestParam("amount") @NotNull Integer amount) {
+        try {
+            return recipeHandler.addOrUpdateIngredient(recipeId, ingredientId, amount).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(value = "/{recipeId}/ingredient/{ingredientId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> removeIngredient(@PathVariable("recipeId") Integer recipeId,
+                                                        @PathVariable("ingredientId") Integer ingredientId) {
+        try {
+            return recipeHandler.removeIngredient(recipeId, ingredientId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        }
     }
 
 }

@@ -22,3 +22,16 @@ create table recipe
     constraint RECIPE_NAME_uindex
         unique (NAME)
 );
+
+create table recipe_ingredients
+(
+    recipe_id     int not null,
+    ingredient_id int not null,
+    amount        int null,
+    constraint recipe_ingredients_pk
+        primary key (recipe_id, ingredient_id),
+    constraint recipe_ingredients_ingredient_id_fk
+        foreign key (ingredient_id) references ingredient (id),
+    constraint recipe_ingredients_recipe_id_fk
+        foreign key (recipe_id) references recipe (ID)
+);
