@@ -36,4 +36,7 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe")
     Set<RecipeIngredient> recipeIngredients;
 
+    @OneToMany(mappedBy = "recipe")
+    Set<Step> steps;
+
 }

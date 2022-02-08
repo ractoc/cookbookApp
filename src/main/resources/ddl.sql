@@ -35,3 +35,18 @@ create table recipe_ingredients
     constraint recipe_ingredients_recipe_id_fk
         foreign key (recipe_id) references recipe (ID)
 );
+
+create table step
+(
+    id           int auto_increment,
+    description  tinytext not null,
+    recipe_id    int      not null,
+    step_counter int      not null,
+    constraint step_pk
+        primary key (id),
+    constraint step_recipe_id_fk
+        foreign key (recipe_id) references recipe (ID)
+);
+
+create unique index step_recipe_id_step_counter_uindex
+    on step (recipe_id, step_counter);

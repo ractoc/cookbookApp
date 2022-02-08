@@ -2,30 +2,30 @@ package com.ractoc.cookbook.handler;
 
 import com.ractoc.cookbook.dao.entity.Ingredient;
 import com.ractoc.cookbook.dao.entity.Recipe;
+import com.ractoc.cookbook.dao.entity.Step;
 import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.exception.FileStorageException;
 import com.ractoc.cookbook.exception.NoSuchEntryException;
 import com.ractoc.cookbook.mapper.RecipeMapper;
+import com.ractoc.cookbook.mapper.StepMapper;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
-import com.ractoc.cookbook.service.FileStorageService;
-import com.ractoc.cookbook.service.IngredientService;
-import com.ractoc.cookbook.service.RecipeIngredientService;
-import com.ractoc.cookbook.service.RecipeService;
+import com.ractoc.cookbook.model.StepModel;
+import com.ractoc.cookbook.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public record RecipeHandler(RecipeService recipeService,
                             IngredientService ingredientService,
                             RecipeIngredientService recipeIngredientService,
+                            StepService stepService,
                             FileStorageService fileStorageService) {
 
     @Autowired
@@ -87,6 +87,52 @@ public record RecipeHandler(RecipeService recipeService,
         Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
         Ingredient ingredient = ingredientService.findIngredientById(ingredientId).orElseThrow(() -> new NoSuchEntryException("No Ingredient found for ID " + ingredientId));
         recipeIngredientService.removeIngredientFromRecipe(recipe, ingredient);
+        return findRecipeById(recipeId);
+    }
+
+    public Optional<RecipeModel> saveStep(Integer recipeId, StepModel stepModel) throws NoSuchEntryException, DuplicateEntryException {
+        Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
+        Optional<Step> step = stepService.findStepByRecipeAndCounter(recipeId, stepModel.getStepCounter());
+        if (step.isPresent() && !step.get().getId().equals(stepModel.getId())) {
+            throw new DuplicateEntryException("stepCounter");
+        }
+        stepService.saveStep(recipe, StepMapper.INSTANCE.modelToDB(stepModel));
+        return findRecipeById(recipeId);
+    }
+
+    public Optional<RecipeModel> switchSteps(Integer recipeId, Integer stepAId, Integer stepBId) throws NoSuchEntryException {
+        Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
+        Step stepA = stepService.findStepById(stepAId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepAId));
+        Step stepB = stepService.findStepById(stepAId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepBId));
+
+        Integer stepAStepCounter = stepA.getStepCounter();
+        Integer stepBStepCounter = stepB.getStepCounter();
+
+        stepA.setStepCounter(stepBStepCounter);
+        stepB.setStepCounter(stepAStepCounter);
+
+        stepService.saveStep(recipe, stepA);
+        stepService.saveStep(recipe, stepB);
+
+        return findRecipeById(recipeId);
+    }
+
+    public Optional<RecipeModel> removeStep(Integer recipeId, Integer stepId) throws NoSuchEntryException {
+        Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
+        stepService.findStepById(stepId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepId));
+        stepService.deleteStep(stepId);
+        List<Step> steps = stepService.getStepsForRecipe(recipeId);
+        Map<Integer, Step> stepMap = steps
+                .stream()
+                .sorted(Comparator.comparingInt(Step::getStepCounter))
+                .collect(HashMap::new, (map, step) -> map.put(map.size(), step), Map::putAll);
+        stepMap.entrySet()
+                .stream()
+                .map(entry -> {
+                    Step step = entry.getValue();
+                    step.setStepCounter(entry.getKey());
+                    return step;
+                }).forEach((step) -> stepService.saveStep(recipe, step));
         return findRecipeById(recipeId);
     }
 }

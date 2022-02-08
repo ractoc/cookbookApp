@@ -18,4 +18,6 @@ public class RecipeModel implements Serializable {
     private String imageFileName;
 
     private Set<RecipeIngredientModel> recipeIngredients;
+
+    private Set<StepModel> steps;
 }

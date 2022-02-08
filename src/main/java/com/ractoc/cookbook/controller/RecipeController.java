@@ -6,12 +6,14 @@ import com.ractoc.cookbook.exception.NoSuchEntryException;
 import com.ractoc.cookbook.handler.RecipeHandler;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
+import com.ractoc.cookbook.model.StepModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,6 +62,18 @@ public class RecipeController extends BaseController {
         }
     }
 
+    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> updateRecipe(@PathVariable("id") Integer recipeId, @RequestBody RecipeModel recipe) throws ValidationException {
+        if (!recipeId.equals(recipe.getId())) {
+            throw new ValidationException("Supplied ID doesn't match recipe id");
+        }
+        try {
+            return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), OK);
+        } catch (DuplicateEntryException e) {
+            return new ResponseEntity(e.getMessage(), CONFLICT);
+        }
+    }
+
     @PostMapping(value = "/{id}/uploadImage", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RecipeModel> uploadImage(@PathVariable("id") Integer recipeId,
                                                    @RequestParam("file") @NotNull MultipartFile file) {
@@ -92,18 +106,6 @@ public class RecipeController extends BaseController {
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<RecipeModel> updateRecipe(@PathVariable("id") Integer recipeId, @RequestBody RecipeModel recipe) throws ValidationException {
-        if (!recipeId.equals(recipe.getId())) {
-            throw new ValidationException("Supplied ID doesn't match recipe id");
-        }
-        try {
-            return new ResponseEntity<>(recipeHandler.saveRecipe(recipe), OK);
-        } catch (DuplicateEntryException e) {
-            return new ResponseEntity(e.getMessage(), CONFLICT);
-        }
-    }
-
     @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> deleteRecipe(@PathVariable("id") Integer recipeId) {
         return recipeHandler.deleteRecipe(recipeId).map(id -> new ResponseEntity<>(id, NO_CONTENT)).orElse(new ResponseEntity<>(NOT_FOUND));
@@ -125,6 +127,56 @@ public class RecipeController extends BaseController {
                                                         @PathVariable("ingredientId") Integer ingredientId) {
         try {
             return recipeHandler.removeIngredient(recipeId, ingredientId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "/{recipeId}/step", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> addStep(@PathVariable("recipeId") Integer recipeId,
+                                               @RequestBody StepModel step) {
+        try {
+            return recipeHandler.saveStep(recipeId, step).map(recipe -> new ResponseEntity<>(recipe, CREATED)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        } catch (DuplicateEntryException e) {
+            return new ResponseEntity(e.getMessage(), CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/{recipeId}/step/{stepId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> updateStep(@PathVariable("recipeId") Integer recipeId,
+                                                  @PathVariable("stepId") Integer stepId,
+                                                  @RequestBody StepModel step) throws ValidationException {
+        if (!stepId.equals(step.getId())) {
+            throw new ValidationException("Supplied ID doesn't match recipe id");
+        }
+        try {
+            return recipeHandler.saveStep(recipeId, step).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        } catch (DuplicateEntryException e) {
+            return new ResponseEntity(e.getMessage(), CONFLICT);
+        }
+    }
+
+    @Transactional
+    @PostMapping(value="/{recipeId}/step/switch", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> switchSteps(@PathVariable("recipeId") Integer recipeId,
+                                                   @RequestParam("stepA") Integer stepA,
+                                                   @RequestParam("stepB") Integer stepB) {
+        try {
+            return recipeHandler.switchSteps(recipeId, stepA, stepB).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
+        } catch (NoSuchEntryException e) {
+            return new ResponseEntity(e.getMessage(), NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(value = "/{recipeId}/step/{stepId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<RecipeModel> removeStep(@PathVariable("recipeId") Integer recipeId,
+                                                        @PathVariable("stepId") Integer stepId) {
+        try {
+            return recipeHandler.removeStep(recipeId, stepId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
         } catch (NoSuchEntryException e) {
             return new ResponseEntity(e.getMessage(), NOT_FOUND);
         }
