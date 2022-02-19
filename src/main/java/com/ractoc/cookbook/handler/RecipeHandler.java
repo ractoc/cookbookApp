@@ -103,7 +103,7 @@ public record RecipeHandler(RecipeService recipeService,
     public Optional<RecipeModel> switchSteps(Integer recipeId, Integer stepAId, Integer stepBId) throws NoSuchEntryException {
         Recipe recipe = recipeService.findRecipeById(recipeId).orElseThrow(() -> new NoSuchEntryException("No Recipe found for ID " + recipeId));
         Step stepA = stepService.findStepById(stepAId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepAId));
-        Step stepB = stepService.findStepById(stepAId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepBId));
+        Step stepB = stepService.findStepById(stepBId).orElseThrow(() -> new NoSuchEntryException("No Step found for ID " + stepBId));
 
         Integer stepAStepCounter = stepA.getStepCounter();
         Integer stepBStepCounter = stepB.getStepCounter();
@@ -130,7 +130,7 @@ public record RecipeHandler(RecipeService recipeService,
                 .stream()
                 .map(entry -> {
                     Step step = entry.getValue();
-                    step.setStepCounter(entry.getKey());
+                    step.setStepCounter(entry.getKey() + 1);
                     return step;
                 }).forEach((step) -> stepService.saveStep(recipe, step));
         return findRecipeById(recipeId);

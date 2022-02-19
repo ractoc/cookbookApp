@@ -74,7 +74,7 @@ public class RecipeController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/{id}/uploadImage", consumes = MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/uploadImage", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> uploadImage(@PathVariable("id") Integer recipeId,
                                                    @RequestParam("file") @NotNull MultipartFile file) {
         try {
