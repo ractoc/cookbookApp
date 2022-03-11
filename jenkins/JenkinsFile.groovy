@@ -14,7 +14,7 @@ pipeline {
 
         stage("Deploy Application"){
             steps{
-                sh 'rm /var/www/services/cookbook/*'
+                sh 'rm /var/www/services/cookbook/*.* 1>/dev/null 2>&1'
                 sh 'tar -C /var/www/services/cookbook -zxvf target/cookbook*.tar.gz'
                 sh 'sudo /var/www/services/cookbook/installer.sh'
             }
