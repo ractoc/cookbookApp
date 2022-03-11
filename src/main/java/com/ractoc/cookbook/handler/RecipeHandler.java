@@ -22,14 +22,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public record RecipeHandler(RecipeService recipeService,
-                            IngredientService ingredientService,
-                            RecipeIngredientService recipeIngredientService,
-                            StepService stepService,
-                            FileStorageService fileStorageService) {
+public class RecipeHandler {
+
+    private final RecipeService recipeService;
+    private final IngredientService ingredientService;
+    private final RecipeIngredientService recipeIngredientService;
+    private final StepService stepService;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public RecipeHandler {
+    public RecipeHandler(RecipeService recipeService,
+                         IngredientService ingredientService,
+                         RecipeIngredientService recipeIngredientService,
+                         StepService stepService,
+                         FileStorageService fileStorageService) {
+        this.recipeService = recipeService;
+        this.ingredientService = ingredientService;
+        this.recipeIngredientService = recipeIngredientService;
+        this.stepService = stepService;
+        this.fileStorageService = fileStorageService;
     }
 
     public List<SimpleRecipeModel> findAllRecipes(String searchString) {

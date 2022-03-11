@@ -4,7 +4,6 @@ import com.ractoc.cookbook.dao.entity.Ingredient;
 import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.mapper.IngredientMapper;
 import com.ractoc.cookbook.model.IngredientModel;
-import com.ractoc.cookbook.service.FileStorageService;
 import com.ractoc.cookbook.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,10 +13,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public record IngredientHandler(IngredientService ingredientService, FileStorageService fileStorageService) {
+public class IngredientHandler {
+
+    private final IngredientService ingredientService;
 
     @Autowired
-    public IngredientHandler {
+    public IngredientHandler(IngredientService ingredientService) {
+        this.ingredientService = ingredientService;
     }
 
     public List<IngredientModel> findAllIngredients(String searchString) {

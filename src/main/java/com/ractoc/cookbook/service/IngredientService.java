@@ -9,10 +9,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public record IngredientService(IngredientRepository ingredientRepository) {
+public class IngredientService {
+
+    private final IngredientRepository ingredientRepository;
 
     @Autowired
-    public IngredientService {
+    public IngredientService(IngredientRepository ingredientRepository) {
+        this.ingredientRepository = ingredientRepository;
     }
 
     public Stream<Ingredient> findAllIngredients(String searchString) {

@@ -1,8 +1,4 @@
-create schema cookbook collate utf8mb4_0900_ai_ci;
-
-grant alter, create, delete, drop, index, insert, select, update on cookbook.* to cookbook;
-
-create table ingredient
+create table cookbook.ingredient
 (
     id               int auto_increment
         primary key,
@@ -12,7 +8,7 @@ create table ingredient
         unique (name)
 );
 
-create table recipe
+create table cookbook.recipe
 (
     ID              int auto_increment
         primary key,
@@ -23,7 +19,7 @@ create table recipe
         unique (NAME)
 );
 
-create table recipe_ingredients
+create table cookbook.recipe_ingredients
 (
     recipe_id     int not null,
     ingredient_id int not null,
@@ -36,7 +32,7 @@ create table recipe_ingredients
         foreign key (recipe_id) references recipe (ID)
 );
 
-create table step
+create table cookbook.step
 (
     id           int auto_increment
         primary key,

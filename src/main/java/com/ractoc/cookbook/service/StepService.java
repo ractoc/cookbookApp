@@ -3,13 +3,22 @@ package com.ractoc.cookbook.service;
 import com.ractoc.cookbook.dao.StepRepository;
 import com.ractoc.cookbook.dao.entity.Recipe;
 import com.ractoc.cookbook.dao.entity.Step;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public record StepService(StepRepository stepRepository) {
+public class StepService {
+
+    private final StepRepository stepRepository;
+
+    @Autowired
+    public StepService(StepRepository stepRepository) {
+        this.stepRepository = stepRepository;
+    }
+
     public void saveStep(Recipe recipe, Step step) {
         step.setRecipe(recipe);
         stepRepository.save(step);

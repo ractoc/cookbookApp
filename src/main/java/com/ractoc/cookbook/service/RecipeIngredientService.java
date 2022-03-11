@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public record RecipeIngredientService(RecipeIngredientRepository recipeIngredientRepository) {
+public class RecipeIngredientService {
+
+    private final RecipeIngredientRepository recipeIngredientRepository;
 
     @Autowired
-    public RecipeIngredientService {
+    public RecipeIngredientService(RecipeIngredientRepository recipeIngredientRepository) {
+        this.recipeIngredientRepository = recipeIngredientRepository;
     }
 
     public void saveIngredientToRecipe(Recipe recipe, Ingredient ingredient, Integer amount) {

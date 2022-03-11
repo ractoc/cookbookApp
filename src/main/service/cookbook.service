@@ -1,0 +1,14 @@
+[Unit]
+Description=CookBook backend app
+After=network.target
+
+[Service]
+WorkingDirectory=/var/www/services/cookbook
+ExecStart=java -Dspring.profiles.active=prod -Ddb.password=${DB_PASSWORD} -jar /var/www/services/cookbook/cookbook.jar
+Restart=always
+User=cookbook
+Group=cookbook
+
+[Install]
+WantedBy=multi-user.target
+

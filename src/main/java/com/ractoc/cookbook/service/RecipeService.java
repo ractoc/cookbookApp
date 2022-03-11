@@ -9,10 +9,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public record RecipeService(RecipeRepository recipeRepository) {
+public class RecipeService {
+
+    private final RecipeRepository recipeRepository;
 
     @Autowired
-    public RecipeService {
+    public RecipeService(RecipeRepository recipeRepository) {
+        this.recipeRepository = recipeRepository;
     }
 
     public Stream<Recipe> findAllRecipes(String searchString) {

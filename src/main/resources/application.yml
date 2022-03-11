@@ -1,6 +1,6 @@
 ## webserver
 server:
-  port: 8080
+  port: 9090
   servlet:
     contextPath: /api
 
@@ -12,19 +12,16 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-#    show-sql: false
-  ## MySQL
-  datasource:
-    url: jdbc:mysql://localhost:9876/cookbook
-    username: cookbook
-    password: cookbook
+  ## Flyway
+  flyway:
+    schemas: cookbook
   # File uploads
   servlet:
     multipart:
       enabled: true
       file-size-threshold: 2KB
-      max-file-size: 200MB
-      max-request-size: 215MB
+      max-file-size: 5MB
+      max-request-size: 15MB
   jackson:
     default-property-inclusion: non_null
 
@@ -33,6 +30,55 @@ file:
     location: ./uploads
 
 logging:
-  level:
-    root: DEBUG
   pattern.console: "%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n"
+
+---
+spring:
+  ## JPA
+  jpa:
+    properties:
+      hibernate:
+        show-sql: true
+  ## MySQL
+  datasource:
+    url: jdbc:mysql://localhost:9876/cookbook
+    username: cookbook
+    password: ${db.password}
+  ## Flyway
+  flyway:
+    url: jdbc:mysql://localhost:9876/cookbook
+    username: cookbook
+    password: ${db.password}
+  config:
+    activate:
+      on-profile: default
+
+logging:
+  level:
+    com.ractoc: DEBUG
+
+---
+spring:
+  ## JPA
+  jpa:
+    properties:
+      hibernate:
+        show-sql: false
+  ## MySQL
+  datasource:
+    url: jdbc:mysql://192.168.1.115:3306/cookbook
+    username: cookbook
+    password: ${db.password}
+  ## Flyway
+  flyway:
+    url: jdbc:mysql://192.168.1.115:3306/cookbook
+    user: cookbook
+    password: ${db.password}
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    com.ractoc: DEBUG
+---

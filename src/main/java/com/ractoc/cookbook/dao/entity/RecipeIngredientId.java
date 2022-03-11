@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
@@ -15,8 +14,6 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Embeddable
 public class RecipeIngredientId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 5264785163223776676L;
 
     @Column(name = "recipe_id", nullable = false)
     Integer recipeId;
