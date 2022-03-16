@@ -8,6 +8,9 @@ import com.ractoc.cookbook.dao.entity.RecipeIngredientId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
+
 @Service
 public class RecipeIngredientService {
 
@@ -16,6 +19,10 @@ public class RecipeIngredientService {
     @Autowired
     public RecipeIngredientService(RecipeIngredientRepository recipeIngredientRepository) {
         this.recipeIngredientRepository = recipeIngredientRepository;
+    }
+
+    public Stream<Recipe> findAllRecipesByIngredientId(Integer ingredientId) {
+        return recipeIngredientRepository.findAllByIngredientId(ingredientId).map(RecipeIngredient::getRecipe);
     }
 
     public void saveIngredientToRecipe(Recipe recipe, Ingredient ingredient, Integer amount) {
@@ -33,5 +40,9 @@ public class RecipeIngredientService {
         recipeIngredient.setRecipe(recipe);
         recipeIngredient.setIngredient(ingredient);
         recipeIngredientRepository.delete(recipeIngredient);
+    }
+
+    public boolean isIngredientInUse(Integer ingredientId) {
+        return recipeIngredientRepository.existsByIngredientId(ingredientId);
     }
 }

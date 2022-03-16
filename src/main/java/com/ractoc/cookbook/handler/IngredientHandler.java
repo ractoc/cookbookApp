@@ -5,6 +5,7 @@ import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.mapper.IngredientMapper;
 import com.ractoc.cookbook.model.IngredientModel;
 import com.ractoc.cookbook.service.IngredientService;
+import com.ractoc.cookbook.service.RecipeIngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +17,28 @@ import java.util.stream.Collectors;
 public class IngredientHandler {
 
     private final IngredientService ingredientService;
+    private final RecipeIngredientService recipeIngredientService;
 
     @Autowired
-    public IngredientHandler(IngredientService ingredientService) {
+    public IngredientHandler(IngredientService ingredientService, RecipeIngredientService recipeIngredientService) {
         this.ingredientService = ingredientService;
+        this.recipeIngredientService = recipeIngredientService;
     }
 
     public List<IngredientModel> findAllIngredients(String searchString) {
-        return ingredientService.findAllIngredients(searchString).map(IngredientMapper.INSTANCE::dbToModel).collect(Collectors.toList());
+        return ingredientService.findAllIngredients(searchString)
+                .map(IngredientMapper.INSTANCE::dbToModel)
+                .peek(model -> model.setInUse(recipeIngredientService.isIngredientInUse(model.getId())))
+                .collect(Collectors.toList());
     }
 
     public Optional<IngredientModel> findIngredientById(Integer id) {
-        return ingredientService.findIngredientById(id).map(IngredientMapper.INSTANCE::dbToModel);
+        return ingredientService.findIngredientById(id)
+                .map(IngredientMapper.INSTANCE::dbToModel)
+                .map(model -> {
+                    model.setInUse(recipeIngredientService.isIngredientInUse(model.getId()));
+                    return model;
+                });
     }
 
     public IngredientModel saveIngredient(IngredientModel ingredientModel) throws DuplicateEntryException {

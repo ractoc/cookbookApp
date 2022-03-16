@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 @Component
 public class RecipeHandler {
@@ -44,11 +45,20 @@ public class RecipeHandler {
     }
 
     public List<SimpleRecipeModel> findAllRecipes(String searchString) {
-        return recipeService.findAllRecipes(searchString).map(RecipeMapper.INSTANCE::dbToSimpleModel).collect(Collectors.toList());
+        return recipeService.findAllRecipes(searchString)
+                .map(RecipeMapper.INSTANCE::dbToSimpleModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<SimpleRecipeModel> findAllRecipesByIngredientId(Integer ingredientId) {
+        return recipeIngredientService.findAllRecipesByIngredientId(ingredientId)
+                .map(RecipeMapper.INSTANCE::dbToSimpleModel)
+                .collect(Collectors.toList());
     }
 
     public Optional<RecipeModel> findRecipeById(Integer id) {
-        return recipeService.findRecipeById(id).map(RecipeMapper.INSTANCE::dbToModel);
+        return recipeService.findRecipeById(id)
+                .map(RecipeMapper.INSTANCE::dbToModel);
     }
 
     public RecipeModel saveRecipe(RecipeModel recipeModel) throws DuplicateEntryException {

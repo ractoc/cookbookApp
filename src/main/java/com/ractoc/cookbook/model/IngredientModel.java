@@ -20,4 +20,5 @@ public class IngredientModel implements Serializable {
     private MeasurementType measurementType;
     @Positive
     private Integer amount;
+    private boolean inUse;
 }

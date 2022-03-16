@@ -47,11 +47,11 @@ spring:
   ## Flyway
   flyway:
     url: jdbc:mysql://localhost:9876/cookbook
-    username: cookbook
+    user: cookbook
     password: ${db.password}
   config:
     activate:
-      on-profile: default
+      on-profile: local
 
 logging:
   level:

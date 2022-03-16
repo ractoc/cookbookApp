@@ -48,6 +48,14 @@ public class RecipeController extends BaseController {
                 , OK);
     }
 
+    @GetMapping(value = "/ingredient/{id}", produces = APPLICATION_JSON_VALUE)
+    @Transactional
+    public ResponseEntity<List<SimpleRecipeModel>> findAllRecipesForIngredientId(@PathVariable("id") Integer ingredientId) {
+        return new ResponseEntity<>(
+                recipeHandler.findAllRecipesByIngredientId(ingredientId)
+                , OK);
+    }
+
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> findRecipeById(@PathVariable("id") Integer recipeId) {
         return recipeHandler.findRecipeById(recipeId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
@@ -161,7 +169,7 @@ public class RecipeController extends BaseController {
     }
 
     @Transactional
-    @PostMapping(value="/{recipeId}/step/switch", produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{recipeId}/step/switch", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> switchSteps(@PathVariable("recipeId") Integer recipeId,
                                                    @RequestParam("stepA") Integer stepA,
                                                    @RequestParam("stepB") Integer stepB) {
@@ -174,7 +182,7 @@ public class RecipeController extends BaseController {
 
     @DeleteMapping(value = "/{recipeId}/step/{stepId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeModel> removeStep(@PathVariable("recipeId") Integer recipeId,
-                                                        @PathVariable("stepId") Integer stepId) {
+                                                  @PathVariable("stepId") Integer stepId) {
         try {
             return recipeHandler.removeStep(recipeId, stepId).map(recipe -> new ResponseEntity<>(recipe, OK)).orElse(new ResponseEntity<>(NOT_FOUND));
         } catch (NoSuchEntryException e) {
