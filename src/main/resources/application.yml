@@ -66,12 +66,12 @@ spring:
         show-sql: false
   ## MySQL
   datasource:
-    url: jdbc:mysql://192.168.1.115:3306/cookbook
+    url: jdbc:mysql://192.168.1.195:3306/cookbook
     username: cookbook
     password: ${db.password}
   ## Flyway
   flyway:
-    url: jdbc:mysql://192.168.1.115:3306/cookbook
+    url: jdbc:mysql://192.168.1.195:3306/cookbook
     user: cookbook
     password: ${db.password}
   config:
