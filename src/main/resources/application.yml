@@ -56,6 +56,7 @@ spring:
 logging:
   level:
     com.ractoc: DEBUG
+    org.springframework: DEBUG
 
 ---
 spring:
@@ -63,7 +64,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        show-sql: false
+        show-sql: true
   ## MySQL
   datasource:
     url: jdbc:mysql://192.168.1.195:3306/cookbook
@@ -81,4 +82,5 @@ spring:
 logging:
   level:
     com.ractoc: DEBUG
+    org.springframework: DEBUG
 ---
