@@ -5,12 +5,11 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum MeasurementType {
-    GRAM(100, "Gram"),
-    TEASPOON(200, "Theelepel"),
-    TABLESPOON(300, "Eetlepel"),
-    PIECE(400, "Stuks"),
-    PINCH(500, "Snufje");
+public enum RecipeCategory {
+    BREAKFAST(100, "Ontbijt"),
+    LUNCH(200, "Lunch"),
+    DINNER(300, "Diner"),
+    SNACK(400, "Tussendoortje");
 
     final Integer id;
     final String displayName;

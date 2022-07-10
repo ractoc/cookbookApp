@@ -16,6 +16,7 @@ public class RecipeModel implements Serializable {
     private String name;
     private String description;
     private String imageFileName;
+    private RecipeCategory recipeCategory;
 
     private Set<RecipeIngredientModel> recipeIngredients;
 

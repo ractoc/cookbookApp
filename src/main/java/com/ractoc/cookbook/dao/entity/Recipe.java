@@ -1,5 +1,6 @@
 package com.ractoc.cookbook.dao.entity;
 
+import com.ractoc.cookbook.model.RecipeCategory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,6 +33,10 @@ public class Recipe {
     @Column(name = "IMAGE_FILE_NAME", length = 25)
     @ToString.Include
     private String imageFileName;
+
+    @Column(name = "CATEGORY", nullable = false)
+    @ToString.Include
+    private RecipeCategory recipeCategory;
 
     @OneToMany(mappedBy = "recipe")
     Set<RecipeIngredient> recipeIngredients;

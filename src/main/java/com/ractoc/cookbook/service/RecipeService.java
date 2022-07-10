@@ -1,12 +1,15 @@
 package com.ractoc.cookbook.service;
 
-import com.ractoc.cookbook.dao.entity.Recipe;
 import com.ractoc.cookbook.dao.RecipeRepository;
+import com.ractoc.cookbook.dao.entity.Recipe;
+import com.ractoc.cookbook.model.RecipeCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 public class RecipeService {
@@ -18,12 +21,14 @@ public class RecipeService {
         this.recipeRepository = recipeRepository;
     }
 
-    public Stream<Recipe> findAllRecipes(String searchString) {
-        if (searchString.isBlank()) {
-            return recipeRepository.findAll().stream();
+    public Stream<Recipe> findAllRecipes(String searchString, RecipeCategory searchCategory) {
+        Stream<Recipe> recipeStream;
+        if (isBlank(searchString)) {
+            recipeStream = recipeRepository.findAll().stream();
         } else {
-            return recipeRepository.findAllByNameContainingIgnoreCase(searchString).stream();
+            recipeStream = recipeRepository.findAllByNameContainingIgnoreCase(searchString).stream();
         }
+        return recipeStream.filter(r -> searchCategory == null || searchCategory == r.getRecipeCategory());
     }
 
     public Optional<Recipe> findRecipeById(Integer id) {

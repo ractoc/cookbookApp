@@ -8,6 +8,7 @@ import com.ractoc.cookbook.exception.FileStorageException;
 import com.ractoc.cookbook.exception.NoSuchEntryException;
 import com.ractoc.cookbook.mapper.RecipeMapper;
 import com.ractoc.cookbook.mapper.StepMapper;
+import com.ractoc.cookbook.model.RecipeCategory;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
 import com.ractoc.cookbook.model.StepModel;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 @Component
 public class RecipeHandler {
@@ -44,9 +44,10 @@ public class RecipeHandler {
         this.fileStorageService = fileStorageService;
     }
 
-    public List<SimpleRecipeModel> findAllRecipes(String searchString) {
-        return recipeService.findAllRecipes(searchString)
+    public List<SimpleRecipeModel> findAllRecipes(String searchString, RecipeCategory searchCategory) {
+        return recipeService.findAllRecipes(searchString, searchCategory)
                 .map(RecipeMapper.INSTANCE::dbToSimpleModel)
+                .sorted((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()))
                 .collect(Collectors.toList());
     }
 

@@ -4,6 +4,7 @@ import com.ractoc.cookbook.exception.DuplicateEntryException;
 import com.ractoc.cookbook.exception.FileStorageException;
 import com.ractoc.cookbook.exception.NoSuchEntryException;
 import com.ractoc.cookbook.handler.RecipeHandler;
+import com.ractoc.cookbook.model.RecipeCategory;
 import com.ractoc.cookbook.model.RecipeModel;
 import com.ractoc.cookbook.model.SimpleRecipeModel;
 import com.ractoc.cookbook.model.StepModel;
@@ -42,9 +43,10 @@ public class RecipeController extends BaseController {
     }
 
     @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SimpleRecipeModel>> findAllRecipes(@RequestParam("searchString") String searchString) {
+    public ResponseEntity<List<SimpleRecipeModel>> findAllRecipes(@RequestParam(value = "searchString", required = false) String searchString,
+                                                                  @RequestParam(value = "searchCategory", required = false) RecipeCategory searchCategory) {
         return new ResponseEntity<>(
-                recipeHandler.findAllRecipes(searchString)
+                recipeHandler.findAllRecipes(searchString, searchCategory)
                 , OK);
     }
 
